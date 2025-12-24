@@ -11,8 +11,6 @@
 
     <style>
         body { font-family: 'Manrope', sans-serif; background-color: #020617; } /* Slate-950 */
-        
-        /* Fade In Animation */
         .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -33,7 +31,7 @@
             <!-- Items Javascript se aayenge -->
         </div>
 
-        <!-- Empty State (Hidden by default) -->
+        <!-- Empty State -->
         <div id="empty-msg" class="hidden flex-col items-center justify-center mt-20 text-center opacity-50">
             <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
                 <i class="fa-regular fa-heart text-3xl text-slate-500"></i>
@@ -45,17 +43,20 @@
     </div>
 
     <script>
-        // --- LOGIC ---
+        // ===============================================
+        // 🔴 UNIQUE ID FOR SELF IMP. PAGE (MATCHES INDEX)
+        // ===============================================
+        const APP_ID = 'self_imp_favs'; 
 
+        // --- LOGIC ---
         function loadFavorites() {
-            // Local Storage se data uthao
-            const favs = JSON.parse(localStorage.getItem('favs')) || [];
+            // Using Unique APP_ID
+            const favs = JSON.parse(localStorage.getItem(APP_ID)) || [];
             const grid = document.getElementById('fav-grid');
             const emptyMsg = document.getElementById('empty-msg');
 
             grid.innerHTML = '';
 
-            // Agar koi favorite nahi hai
             if (favs.length === 0) {
                 emptyMsg.classList.remove('hidden');
                 emptyMsg.classList.add('flex');
@@ -65,30 +66,23 @@
                 emptyMsg.classList.remove('flex');
             }
 
-            // Books Render karo
             favs.forEach((book, index) => {
-                // Animation delay for stagger effect
                 const delay = index * 50; 
                 
                 grid.innerHTML += `
                 <div class="fade-in relative group" style="animation-delay: ${delay}ms">
-                    <!-- Card Container -->
                     <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden border border-white/10 bg-slate-900 shadow-lg"
                          onclick="location.href='details.html?id=${book.id}'">
                         
                         <img src="${book.poster_url}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 cursor-pointer">
-                        
-                        <!-- Gradient Overlay -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
 
-                        <!-- Remove Button (Trash Icon) -->
                         <button onclick="removeFav(event, ${book.id})" 
                             class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-md text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white transition-all z-20 active:scale-90">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
                     </div>
 
-                    <!-- Title -->
                     <h3 class="mt-3 text-sm font-semibold text-white truncate cursor-pointer hover:text-indigo-400 transition-colors"
                         onclick="location.href='details.html?id=${book.id}'">
                         ${book.title}
@@ -100,23 +94,19 @@
 
         // --- REMOVE LOGIC ---
         function removeFav(event, id) {
-            // Stop bubbling (taaki details page na khul jaye jab delete dabaye)
             event.stopPropagation();
 
             if(confirm('Remove from favorites?')) {
-                let favs = JSON.parse(localStorage.getItem('favs')) || [];
-                // Filter karke wo book hata do jiska ID match ho raha hai
+                let favs = JSON.parse(localStorage.getItem(APP_ID)) || [];
                 favs = favs.filter(b => b.id != id);
                 
-                // Wapis save karo
-                localStorage.setItem('favs', JSON.stringify(favs));
+                // Wapis save karo using APP_ID
+                localStorage.setItem(APP_ID, JSON.stringify(favs));
                 
-                // UI Refresh karo
                 loadFavorites();
             }
         }
 
-        // Page load hote hi function chalao
         loadFavorites();
 
     </script>
