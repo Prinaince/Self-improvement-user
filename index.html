@@ -60,7 +60,12 @@
 
     <script src="config.js"></script>
     <script>
-        // Supabase Config Fallback (If config.js is missing for preview)
+        // ===============================================
+        // 🔴 UNIQUE ID FOR SELF IMPROVEMENT PAGE
+        // ===============================================
+        const APP_ID = 'self_imp_favs'; 
+
+        // Supabase Config Fallback (Using your provided keys)
         if (typeof sb === 'undefined') {
              const SUPABASE_URL = 'https://zrcwfdqhbpgtiymhgxlu.supabase.co';
              const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpyY3dmZHFoYnBndGl5bWhneGx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1NDczNzksImV4cCI6MjA4MjEyMzM3OX0.pcwvPPlfS2iNFdwQxskRX5bfoCUAXvZEJVNlp4VnkhU';
@@ -80,27 +85,21 @@
             grid.innerHTML = '';
             
             list.forEach(book => {
-                // Fallback for image
                 const img = book.poster_url || 'https://via.placeholder.com/300x450?text=No+Cover';
                 
                 grid.innerHTML += `
                 <div class="group flex flex-col">
                     <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-sm bg-gray-200 border border-gray-100 group-hover:shadow-xl group-hover:shadow-primary/10 transition-all duration-300">
-                        <!-- Image -->
                         <img src="${img}" onclick="location.href='details.html?id=${book.id}'" 
                              class="w-full h-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105">
-                        
-                        <!-- Gradient Overlay -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
-                        <!-- Fav Button (Inside Card) -->
                         <button onclick="addFav(${book.id}, '${book.title.replace(/'/g, "\\'")}', '${img}')" 
                             class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md shadow-sm text-gray-400 hover:text-red-500 hover:scale-110 active:scale-90 transition-all z-10">
                             <i class="fa-regular fa-heart text-sm"></i>
                         </button>
                     </div>
                     
-                    <!-- Title -->
                     <h3 onclick="location.href='details.html?id=${book.id}'" 
                         class="font-semibold text-gray-800 mt-3 text-sm leading-tight line-clamp-2 cursor-pointer group-hover:text-primary transition-colors px-1">
                         ${book.title}
@@ -116,13 +115,14 @@
         }
 
         function addFav(id, title, poster) {
-            // Stop click propagation to prevent opening details page when clicking heart
             event.stopPropagation();
             
-            let favs = JSON.parse(localStorage.getItem('favs')) || [];
+            // Using Unique APP_ID
+            let favs = JSON.parse(localStorage.getItem(APP_ID)) || [];
+            
             if(!favs.find(f => f.id == id)) {
                 favs.push({id, title, poster_url: poster});
-                localStorage.setItem('favs', JSON.stringify(favs));
+                localStorage.setItem(APP_ID, JSON.stringify(favs));
                 
                 // Visual feedback on button
                 const btn = event.currentTarget;
